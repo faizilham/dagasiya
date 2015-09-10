@@ -42,11 +42,11 @@ class Downloads(Model):
 		def set_download(element):
 			set_status(Status.DOWNLOADING)(element)
 			element.user = user
-			
-		self.db.update(set_download, (where("filename") == "filename") & (where("server_name") == "server_name"))
+
+		self.db.update(set_download, (where("filename") == filename) & (where("server_name") == server_name))
 
 	def update_finish(self, filename, server_name):
-		self.db.update(set_status(Status.FINISHED), (where("filename") == "filename") & (where("server_name") == "server_name"))
+		self.db.update(set_status(Status.FINISHED), (where("filename") == filename) & (where("server_name") == server_name))
 
 	def delete(self, filename, server_name):
-		self.db.remove((where("filename") == "filename") & (where("server_name") == "server_name"))
+		self.db.remove((where("filename") == filename) & (where(server_name) == server_name))
