@@ -49,4 +49,4 @@ class Downloads(Model):
 		self.db.update(set_status(Status.FINISHED), (where("filename") == filename) & (where("server_name") == server_name))
 
 	def delete(self, filename, server_name):
-		self.db.remove((where("filename") == filename) & (where(server_name) == server_name))
+		self.db.remove((where("filename") == filename) & (where("server_name") == server_name))
