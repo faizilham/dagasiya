@@ -6,6 +6,7 @@ config = {
 	"free_time_buffer": time(0, 5, 0),
 
 	"download_folder": "/path/to/downloads",
+	"finished_folder": "tmp/finished",
 	"db_folder": "/path/to/db",
 
 	"proxy": {
