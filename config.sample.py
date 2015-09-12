@@ -16,13 +16,23 @@ config = {
 		]
 	},
 
-	"origin": {
+	"servers": {
 		"boxftp": {
 			"protocol": "ftp",
 			"host": "ftp.example.com",
 			"port": 21,
 			"user": "user",
-			"passwd": "password"
+			"passwd": "password",
+			"baseUrl": "/home/"
+		},
+
+		"test_web": {
+			"protocol": "http",
+			"host": "example.com",
+			"port": 80,
+			"user": "user", 		# http Basic auth
+			"passwd": "password",	# http Basic auth
+			"baseUrl": "/"
 		}
 	}
 }
