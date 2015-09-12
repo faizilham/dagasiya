@@ -29,11 +29,11 @@ class Servers:
 				), []
 		else: # http
 			port = server["port"] if "port" in server else 80
-			headers = []
+			headers = {}
 
 			if ("passwd" in server):
 				base64string = base64.encodestring('%s:%s' % (server["user"], server["passwd"])).replace('\n', '')
-				headers.append(("Authorization", "Basic %s" % base64string))
+				headers["Authorization"] = "Basic %s" % base64string
 
 			return "http://{host}:{port}{base_url}".format(
 				host=server["host"],
@@ -46,6 +46,9 @@ class Servers:
 
 	def headers(self, servername):
 		return self.servers[servername]["headers"]
+
+	def protocol(self, servername):
+		return self.servers[servername]["protocol"]
 
 	def __getitem__(self, key):
 		return self.servers[key]
