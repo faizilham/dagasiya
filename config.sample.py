@@ -23,7 +23,7 @@ config = {
 			"port": 21,
 			"user": "user",
 			"passwd": "password",
-			"baseUrl": "/home/"
+			"base_url": "/home/"
 		},
 
 		"test_web": {
@@ -32,7 +32,7 @@ config = {
 			"port": 80,
 			"user": "user", 		# http Basic auth
 			"passwd": "password",	# http Basic auth
-			"baseUrl": "/"
+			"base_url": "/"
 		}
 	}
 }
