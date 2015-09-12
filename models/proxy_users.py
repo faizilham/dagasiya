@@ -1,4 +1,4 @@
-from models import Model, enum, timestamp, parse_timestamp
+from models import Model, enum, timestamp
 from datetime import datetime
 from tinydb import where
 
@@ -18,26 +18,36 @@ class ProxyUsers(Model):
 		Model.__init__(self, dbpath, "proxy_users")
 
 	def set_user(self, name, passwd, quota):
-		user = self.db.get(where("name") == name))
-		if (user)
-			user.passwd = passwd; user.quota = quota
+		user = self.db.get(where("name") == name)
+		current = timestamp()
+		if user:
+			user["passwd"] = passwd; user["quota"] = quota
 
-			current = datetime.now()
 			midnight = datetime(current.year, current.month, current.day, 0, 0, 0)
 
-			if parse_timestamp(user.timestamp) < midnight:
-				user.timestamp = timestamp() 
-				user.usage = 0
+			if user["timestamp"] < midnight:
+				user["timestamp"] = current
+				user["usage"] = 0
 
-			self.db.update(user, where("name") == "name")
-		else
-			self.db.insert({"name": name, "passwd": passwd, "quota": quota, "usage": 0, "timestamp": timestamp()})
+			self.db.update(user, where("name") == name)
+		else:
+			self.db.insert({"name": name, "passwd": passwd, "quota": quota, "usage": 0, "timestamp": current})
 
 	def get_user(self, name):
-		return db.get(where("name") == name))
+		return db.get(where("name") == name)
 
-	def update_usage(self, name, usage):
-		self.db.update({"usage": usage, "timestamp": timestamp()}, where("name") == name))
+	def add_usage(self, name, usage):
+		def inc_usage(element):
+			element["usage"] += usage
+			element["timestamp"] = timestamp()
+
+		self.db.update(inc_usage, where("name") == name)
+
+	def refresh_quotas(self):
+		current = timestamp()
+		midnight = datetime(current.year, current.month, current.day, 0, 0, 0)
+
+		self.db.update({"usage": 0, "timestamp": current}, where("timestamp") < midnight)
 
 	def delete(self, name):
-		self.db.remove(where("name") == name))
+		self.db.remove(where("name") == name)
