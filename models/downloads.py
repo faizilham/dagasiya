@@ -7,6 +7,7 @@ from datetime import datetime
 	{
 		"filename": the filename
 		"server": the server name or full download url (including filename)
+		"size": (estimated) file size in bytes
 		"known": whether the server is a known server (included in preconfig) or not (thus full url)
 		"status": Status enum
 		"queuetime": queue timestamp
@@ -28,11 +29,11 @@ class Downloads(Model):
 		Model.__init__(self, dbpath, "downloads")
 		self.Status = Status
 
-	def insert(self, filename, server):
-		return self.db.insert({"filename": filename, "server": server, "known": True, "status": Status.QUEUE, "queuetime": timestamp()})
+	def insert(self, filename, server, size):
+		return self.db.insert({"filename": filename, "server": server, "size": size, "known": True, "status": Status.QUEUE, "queuetime": timestamp()})
 
-	def insertUrl(self, filename, url):
-		return self.db.insert({"filename": filename, "server": url, "known": False, "status": Status.QUEUE, "queuetime": timestamp()})
+	def insertUrl(self, filename, url, size):
+		return self.db.insert({"filename": filename, "server": url, "size": size, "known": False, "status": Status.QUEUE, "queuetime": timestamp()})
 
 	def get_queue(self):
 		return self.db.search(where("status") == Status.QUEUE)
