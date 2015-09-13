@@ -1,5 +1,13 @@
 import base64
 
+class Proxy(object):
+	def __init__(self, proxy_settings):
+		self.protocol = proxy_settings["protocol"]
+		self.proxy_template = "{protocol}://{{user}}:{{passwd}}@{host}:{port}".format(**proxy_settings)
+		
+	def url(self, user, passwd):
+		return self.protocol, self.proxy_template.format(user=user, passwd=passwd)
+
 class Servers(object):
 	def __init__(self, servers):
 		self.servers = servers

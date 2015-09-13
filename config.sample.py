@@ -10,6 +10,7 @@ config = {
 	"db_folder": "/path/to/db",
 
 	"proxy": {
+		"protocol": "http",
 		"host": "proxy.test.com",
 		"port": 8080,
 		"users": [

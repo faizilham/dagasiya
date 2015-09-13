@@ -14,15 +14,20 @@ class Downloader(object):
 		self.finished_folder = config["finished_folder"]
 		self.dblock = dblock
 
-	def start(self, filename, servername, user):
+	def start(self, filename, servername, username, proxysetting=None):
 		
 		if self.servers.protocol(servername) == "http":
 
 			### get file headers
 			url = self.servers.url(servername, filename)
-			headers = self.servers.headers(servername)
 
-			res = requests.head(url, headers=headers)
+			reqoptions = {"headers": self.servers.headers(servername)}
+			
+			if proxysetting:
+				protocol, url = proxysetting
+				reqoptions["proxies"] = {protocol: url}
+
+			res = requests.head(url, **reqoptions)
 			nbytes = int(res.headers["content-length"])
 
 			### if not exist, mark error
@@ -43,11 +48,11 @@ class Downloader(object):
 
 			### mark download started
 			with self.dblock:
-				self.downloads.update_download(filename, servername, user)
-				self.users.add_usage(user, nbytes)
+				self.downloads.update_download(filename, servername, username)
+				self.users.add_usage(username, nbytes)
 
 			### distribute chunk tasks
-			chunks = [{"pos": k, "start": i, "end": min(i+CHUNKSIZE, nbytes-1), "url":url, "filepath": filepath, "headers": headers}  for k, i in enumerate(range(0, nbytes, CHUNKSIZE))]
+			chunks = [{"pos": k, "start": i, "end": min(i+CHUNKSIZE, nbytes-1), "url":url, "filepath": filepath, "reqoptions": reqoptions}  for k, i in enumerate(range(0, nbytes, CHUNKSIZE))]
 
 			### create status file if not exist
 			try:
@@ -73,7 +78,7 @@ class Downloader(object):
 def download_chunk(data):
 	try:
 		start = data["start"]; end = data["end"]; pos = data["pos"]
-		headers = data["headers"]; filepath = data["filepath"]; url = data["url"]
+		reqoptions = data["reqoptions"]; filepath = data["filepath"]; url = data["url"]
 
 		with open(filepath + ".status", "r+b") as stat:
 			stat.seek(pos); status = stat.read(1)
@@ -81,8 +86,8 @@ def download_chunk(data):
 				return True
 
 			### add range headers and get the chunk
-			headers["Range"] = 'bytes=%s-%s' % (start, end)
-			res = requests.get(url, headers=headers)
+			reqoptions["headers"]["Range"] = 'bytes=%s-%s' % (start, end)
+			res = requests.get(url, **reqoptions)
 
 			### write to file, use r+b to avoid clearing all content
 			with open(filepath, "r+b") as fd:
