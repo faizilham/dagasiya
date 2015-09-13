@@ -21,7 +21,7 @@ def enum(*sequential, **named):
 	enums = dict(zip(sequential, range(len(sequential))), **named)
 	return type('Enum', (), enums)
 
-class Model:
+class Model(object):
 	def __init__(self, dbpath, dbname):
 		path = "{0}/{1}.json".format(dbpath, dbname)
 

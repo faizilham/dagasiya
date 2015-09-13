@@ -5,7 +5,7 @@ import os
 CHUNKSIZE = 1024 * 1024
 WORKER_NUMBER = 4
 
-class Downloader:
+class Downloader(object):
 	def __init__(self, config, servers, users, downloads, dblock):
 		self.servers = servers
 		self.users = users
@@ -23,6 +23,7 @@ class Downloader:
 			headers = self.servers.headers(servername)
 
 			res = requests.head(url, headers=headers)
+			nbytes = int(res.headers["content-length"])
 
 			### if not exist, mark error
 			if res.status_code != 200: 
@@ -40,8 +41,7 @@ class Downloader:
 
 			print "Downloading", filename, "from server", servername, "to", filepath
 
-			### count bytes and mark download
-			nbytes = int(res.headers["content-length"])
+			### mark download started
 			with self.dblock:
 				self.downloads.update_download(filename, servername, user)
 				self.users.add_usage(user, nbytes)

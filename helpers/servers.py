@@ -1,6 +1,6 @@
 import base64
 
-class Servers:
+class Servers(object):
 	def __init__(self, servers):
 		self.servers = servers
 
