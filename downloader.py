@@ -1,4 +1,5 @@
 from multiprocessing import Pool
+from threading import Lock
 import requests
 import os
 
@@ -6,15 +7,16 @@ CHUNKSIZE = 1024 * 1024
 WORKER_NUMBER = 4
 
 class Downloader(object):
-	def __init__(self, config, servers, users, downloads, dblock):
+	def __init__(self, config, servers, proxy, users, downloads):
 		self.servers = servers
 		self.users = users
 		self.downloads = downloads
 		self.download_folder = config["download_folder"]
 		self.finished_folder = config["finished_folder"]
-		self.dblock = dblock
+		self.dblock = Lock()
+		self.proxy = proxy
 
-	def start(self, filename, servername, username, proxysetting=None):
+	def start(self, filename, servername, username):
 		
 		if self.servers.protocol(servername) == "http":
 
@@ -23,8 +25,9 @@ class Downloader(object):
 
 			reqoptions = {"headers": self.servers.headers(servername)}
 			
-			if proxysetting:
-				protocol, url = proxysetting
+			if username:
+				user = self.users.get_user(username)
+				protocol, url = self.proxy.url(user["name"], user["passwd"])
 				reqoptions["proxies"] = {protocol: url}
 
 			res = requests.head(url, **reqoptions)
@@ -64,7 +67,6 @@ class Downloader(object):
 			# start task to 
 			workers = Pool(4)
 			success = all(workers.map(download_chunk, chunks))
-
 			
 			if success:
 				os.rename(filepath, self.finished_folder + filename)

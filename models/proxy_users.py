@@ -7,8 +7,8 @@ from tinydb import where
 	{
 		"name": the user name
 		"passwd": user password
-		"quota": MB of maximum usage
-		"usage": MB of usage for the day
+		"quota": maximum usage per day in bytes
+		"usage": usage for the day in bytes
 		"timestamp": last update timestamp
 	}
 """

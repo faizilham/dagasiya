@@ -14,7 +14,7 @@ config = {
 		"host": "proxy.test.com",
 		"port": 8080,
 		"users": [
-			{"name": "user", "passwd": "password", "quota": 4096}
+			{"name": "user", "passwd": "password", "quota": 4096} # quota in MB
 		]
 	},
 
