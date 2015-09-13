@@ -3,7 +3,6 @@ from datetime import time
 config = {
 	"free_time_start": time(17, 0, 0),
 	"free_time_end": time(23, 59, 59),
-	"free_time_buffer": time(0, 5, 0),
 
 	"download_folder": "/path/to/downloads",
 	"finished_folder": "tmp/finished",
